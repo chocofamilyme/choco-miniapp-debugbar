@@ -22,7 +22,8 @@
 		"types": ["@types/node"],
 		"paths": {
 			"@/*": ["./src/*"]
-		}
+		},
+		"outDir": "./dist"
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
 	"references": [{ "path": "./tsconfig.node.json" }]
