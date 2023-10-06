@@ -45,7 +45,7 @@ export default function () {
 	};
 
 	return {
-		init,
+		initConsole: init,
 		logs
 	};
 }

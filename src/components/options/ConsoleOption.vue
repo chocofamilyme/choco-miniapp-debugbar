@@ -1,6 +1,8 @@
 <template>
 	<div class="console-option">
-		<ul class="console-option__logs">
+		<template v-if="!logs.length">No logs</template>
+
+		<ul v-else class="console-option__logs">
 			<li
 				v-for="log in logs"
 				:key="log.date.toString()"
@@ -17,12 +19,9 @@
 
 <script setup lang="ts">
 import { useConsole } from '@/shared/composables';
+import { getDate } from '@/shared/utils';
 
 const { logs } = useConsole();
-
-const getDate = (date: Date) => {
-	return [date.getHours(), date.getMinutes(), date.getSeconds()].join(':');
-};
 </script>
 
 <style lang="scss">
@@ -49,7 +48,6 @@ const getDate = (date: Date) => {
 		}
 
 		&--warn {
-			// color: #fff;
 			background: #ffa100;
 		}
 
