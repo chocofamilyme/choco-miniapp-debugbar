@@ -4,7 +4,7 @@
 		<button
 			v-show="!isActive"
 			class="miniapp-debugbar-btn"
-			@click="isActive = true"
+			@click="openDebugbar"
 		>
 			Debugbar
 		</button>
@@ -30,6 +30,11 @@
 			<div class="miniapp-debugbar__body">
 				<component :is="activeOption.component"></component>
 			</div>
+
+			<button
+				class="miniapp-debugbar__btn-close"
+				@click="hideDebugbar"
+			></button>
 		</div>
 	</div>
 </template>
@@ -76,13 +81,27 @@ const selectOption = (option: DebugbarOption) => {
 const isActiveOption = (option: DebugbarOption) => {
 	return activeOption.value === option;
 };
+
+const openDebugbar = () => (isActive.value = true);
+const hideDebugbar = () => (isActive.value = false);
 </script>
 
 <style lang="scss">
 .miniapp-debugbar {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+
+	&__btn-close {
+		position: absolute;
+		top: 20px;
+		right: 16px;
+		display: block;
+		width: 24px;
+		height: 24px;
+		background: url('@/assets/cross.svg') center no-repeat;
+	}
 
 	&-container {
 		position: fixed;
