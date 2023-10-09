@@ -141,14 +141,17 @@ const getReqUrl = (req: NetworkRequest) => {
 	let url = req.url;
 
 	if (req.params) {
-		if (!url.includes('?')) {
-			url += '?';
-		}
-
 		if (typeof req.params === 'object') {
 			for (const key of Object.keys(req.params)) {
-				const pre = url[url.length - 1] === '?' ? '' : '&';
-				url += `${pre}${key}=${req.params[key]}`;
+				const value = req.params[key];
+				if (value) {
+					if (!url.includes('?')) {
+						url += '?';
+					}
+
+					const pre = url[url.length - 1] === '?' ? '' : '&';
+					url += `${pre}${key}=${value}`;
+				}
 			}
 		}
 	}
