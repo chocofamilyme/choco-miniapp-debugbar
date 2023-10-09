@@ -2,72 +2,85 @@
 	<div class="network-option">
 		<template v-if="!requests.length">No requests</template>
 
-		<ul v-else class="network-option__requests">
-			<li
-				v-for="req in requests"
-				:key="req.startDate.toString()"
-				class="network-option__request"
-			>
-				<div class="network-option__request-block">
-					<span class="network-option__important">
-						{{ getDate(req.startDate) }}
-					</span>
-					>
-					{{ req.method.toUpperCase() }} {{ req.url }}
-					<span
-						v-if="req.statusCode"
-						class="network-option__status network-option__important"
-						:class="getStatusCodeClass(req.statusCode)"
-					>
-						{{ req.statusCode }}
-					</span>
-				</div>
-
-				<div class="network-option__request-block">
-					<span class="network-option__important">Headers:</span>
-					<pre class="network-option__code">{{ req.headers }}</pre>
-				</div>
-
-				<div v-if="req.body" class="network-option__request-block">
-					<span class="network-option__important">Body:</span>
-					{{ req.body }}
-				</div>
-
-				<div class="network-option__request-block">
-					<button
-						class="network-option__btn network-option__btn-clipboard"
-						@click="saveReqToClipboard(req)"
-					>
-						Copy
-					</button>
-				</div>
-
-				<div class="network-option__request-block">
-					<div
-						v-if="!req.response"
-						class="network-option__important network-option__pending"
-					>
-						Pending details...
+		<template v-else>
+			<!-- Requests -->
+			<ul class="network-option__requests">
+				<li
+					v-for="req in requests"
+					:key="req.startDate.toString()"
+					class="network-option__request"
+				>
+					<div class="network-option__request-block">
+						<span class="network-option__important">
+							{{ getDate(req.startDate) }}
+						</span>
+						>
+						{{ req.method.toUpperCase() }} {{ getReqUrl(req) }}
+						<span
+							v-if="req.statusCode"
+							class="network-option__status network-option__important"
+							:class="getStatusCodeClass(req.statusCode)"
+						>
+							{{ req.statusCode }}
+						</span>
 					</div>
 
-					<div v-else>
-						<button
-							class="network-option__btn network-option__btn-details network-option__important"
-							:class="{
-								'network-option__btn-details--active': isDetailsActive(req.id)
-							}"
-							@click="onDetailsClick(req.id)"
-						>
-							Details ({{ getReqDuration(req) }} ms)
-						</button>
+					<div class="network-option__request-block">
+						<span class="network-option__important">Headers:</span>
+						<pre class="network-option__code">{{ req.headers }}</pre>
+					</div>
 
-						<div v-if="isDetailsActive(req.id)">
-							<pre class="network-option__code">{{ req.response }}</pre>
+					<div v-if="req.body" class="network-option__request-block">
+						<span class="network-option__important">Body:</span>
+						{{ req.body }}
+					</div>
+
+					<div class="network-option__request-block">
+						<button
+							class="network-option__btn network-option__btn-clipboard"
+							@click="saveReqToClipboard(req)"
+						>
+							Copy
+						</button>
+					</div>
+
+					<div class="network-option__request-block">
+						<div
+							v-if="!req.response"
+							class="network-option__important network-option__pending"
+						>
+							Pending details...
+						</div>
+
+						<div v-else>
+							<button
+								class="network-option__btn network-option__btn-details network-option__important"
+								:class="{
+									'network-option__btn-details--active': isDetailsActive(req.id)
+								}"
+								@click="onDetailsClick(req.id)"
+							>
+								Details ({{ getReqDuration(req) }} ms)
+							</button>
+
+							<div v-if="isDetailsActive(req.id)">
+								<pre class="network-option__code">{{ req.response }}</pre>
+							</div>
 						</div>
 					</div>
-				</div>
-			</li>
-		</ul>
+				</li>
+			</ul>
+
+			<!-- Clear button -->
+			<div class="network-option__clear">
+				<button
+					class="network-option__btn network-option__btn-clear"
+					@click="clearRequests"
+				>
+					Clear requests
+				</button>
+			</div>
+		</template>
 	</div>
 </template>
 
@@ -85,7 +98,7 @@ const HTTP_STATUS_TYPES: { [key: string]: string } = {
 	'5': 'err'
 };
 
-const { requests } = useNetwork();
+const { requests, clearRequests } = useNetwork();
 const openedRequestIds: string[] = reactive([]);
 
 const isDetailsActive = (id: string) => {
@@ -124,6 +137,25 @@ const getReqDuration = (req: NetworkRequest) => {
 	return '...';
 };
 
+const getReqUrl = (req: NetworkRequest) => {
+	let url = req.url;
+
+	if (req.params) {
+		if (!url.includes('?')) {
+			url += '?';
+		}
+
+		if (typeof req.params === 'object') {
+			for (const key of Object.keys(req.params)) {
+				const pre = url[url.length - 1] === '?' ? '' : '&';
+				url += `${pre}${key}=${req.params[key]}`;
+			}
+		}
+	}
+
+	return url;
+};
+
 const getStatusCodeClass = (code: number) => {
 	const codeString = String(code);
 	const className = 'network-option__status--';
@@ -135,6 +167,14 @@ const getStatusCodeClass = (code: number) => {
 <style lang="scss">
 .network-option {
 	padding: 0 16px;
+
+	&__clear {
+		position: sticky;
+		z-index: 1;
+		bottom: 0;
+		right: 0;
+		padding: 8px 0;
+	}
 
 	&__requests {
 		list-style: none;
@@ -148,6 +188,7 @@ const getStatusCodeClass = (code: number) => {
 		font-size: 14px;
 		line-height: 16px;
 		text-align: left;
+		line-break: anywhere;
 		border-radius: 4px;
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
@@ -180,6 +221,17 @@ const getStatusCodeClass = (code: number) => {
 		background: none;
 		font-size: 14px;
 		line-height: 1;
+
+		&-clear {
+			display: block;
+			min-height: 32px;
+			padding: 8px;
+			margin-left: auto;
+			color: #333;
+			background: #fff;
+			border: 1px solid #333 !important;
+			border-radius: 8px;
+		}
 
 		&-clipboard {
 			display: inline-flex;

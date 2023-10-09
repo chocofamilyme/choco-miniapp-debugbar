@@ -9,6 +9,7 @@ export interface NetworkRequest {
 	url: string;
 	method: string;
 	headers: any;
+	params?: any;
 	body?: any;
 	response?: any;
 	startDate: Date;

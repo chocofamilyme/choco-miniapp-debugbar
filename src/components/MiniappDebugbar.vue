@@ -186,6 +186,7 @@ const hideDebugbar = () => (isActive.value = false);
 	}
 
 	&__body {
+		position: relative;
 		flex-grow: 1;
 		overflow: auto;
 		margin-top: 12px;

@@ -27,9 +27,12 @@ export default function () {
 		return false;
 	};
 
+	const clearRequests = () => requests.splice(0, requests.length);
+
 	return {
 		requests,
 		addRequest,
-		addRequestResponseById
+		addRequestResponseById,
+		clearRequests
 	};
 }
