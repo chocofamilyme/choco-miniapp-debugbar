@@ -92,6 +92,8 @@ const hideDebugbar = () => (isActive.value = false);
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	background: #fff;
+	pointer-events: auto;
 
 	&__btn-close {
 		position: absolute;
@@ -119,6 +121,7 @@ const hideDebugbar = () => (isActive.value = false);
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		-webkit-text-size-adjust: 100%;
+		pointer-events: none;
 
 		a {
 			color: inherit;
@@ -157,6 +160,7 @@ const hideDebugbar = () => (isActive.value = false);
 		transform: rotateZ(-90deg);
 		right: -32px;
 		bottom: 64px;
+		pointer-events: auto;
 	}
 
 	&__options {

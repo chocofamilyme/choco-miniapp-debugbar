@@ -1,6 +1,6 @@
 {
 	"name": "choco-miniapp-debugbar",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"type": "module",
 	"files": [
 		"dist"
@@ -11,8 +11,10 @@
 		".": {
 			"import": "./dist/choco-miniapp-debugbar.js",
 			"require": "./dist/choco-miniapp-debugbar.umd.cjs"
-		}
+		},
+		"./style.css": "./dist/style.css"
 	},
+	"types": "./dist/index.d.ts",
 	"scripts": {
 		"dev": "vite",
 		"build": "vue-tsc && vite build",
