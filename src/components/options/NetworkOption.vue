@@ -11,11 +11,6 @@
 					class="network-option__request"
 				>
 					<div class="network-option__request-block">
-						<span class="network-option__important">
-							{{ getDate(req.startDate) }}
-						</span>
-						>
-						{{ req.method.toUpperCase() }} {{ getReqUrl(req) }}
 						<span
 							v-if="req.statusCode"
 							class="network-option__status network-option__important"
@@ -23,17 +18,24 @@
 						>
 							{{ req.statusCode }}
 						</span>
+
+						<span class="network-option__important">
+							{{ getDate(req.startDate) }}
+						</span>
+						>
+						{{ req.method.toUpperCase() }} {{ getReqUrl(req) }}
 					</div>
 
-					<div class="network-option__request-block">
-						<span class="network-option__important">Headers:</span>
+					<details class='network-option__details'>
+						<summary class="network-option__important">Headers</summary>
 						<pre class="network-option__code">{{ req.headers }}</pre>
-					</div>
+					</details>
 
-					<div v-if="req.body" class="network-option__request-block">
-						<span class="network-option__important">Body:</span>
-						{{ req.body }}
-					</div>
+					<details v-if="req.body" class="network-option__request-block network-option__details">
+						<summary class="network-option__important">Body</summary>
+						<pre class="network-option__code">{{ req.body }}</pre>
+					</details>
+
 
 					<div class="network-option__request-block">
 						<button
@@ -203,6 +205,7 @@ const getStatusCodeClass = (code: number) => {
 
 		&-block {
 			margin-bottom: 4px;
+			overflow: auto;
 
 			&:last-child {
 				margin-bottom: 0;
@@ -273,9 +276,11 @@ const getStatusCodeClass = (code: number) => {
 
 	&__code {
 		margin: 0;
+		overflow: auto;
 	}
 
 	&__status {
+		padding-right: 5px;
 		&--info {
 			color: #ffa100;
 		}
@@ -290,6 +295,23 @@ const getStatusCodeClass = (code: number) => {
 
 		&--err {
 			color: #f91f01;
+		}
+	}
+	&__details {
+		summary {
+			display: inline-flex;
+			align-items: center;
+			list-style-type: none;
+			&:after {
+				content: '';
+				display: block;
+				width: 24px;
+				height: 24px;
+				background: url('@/assets/angle-bottom.svg') center no-repeat;
+			}
+		}
+		&[open]summary:after {
+			transform: rotate(180deg);
 		}
 	}
 }
